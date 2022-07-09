@@ -1,0 +1,39 @@
+#!/bin/bash
+#-*-bash-*-#############################################################################################################
+# Copyright 2022, Inesonic, LLC
+#
+# GNU Public License, Version 3:
+#   This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+#   License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+#   version.
+#
+#   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+#   warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+#   details.
+#
+#   You should have received a copy of the GNU General Public License along with this program.  If not, see
+#   <https://www.gnu.org/licenses/>.
+########################################################################################################################
+# Small shell script the identifies files with tabs and/or trailing whitespace and converts tabs to spaces and removes
+# the trailing whitespace.
+#
+
+TEMPORARY_DIRECTORY=$(mktemp -d "${TMPDIR:-/tmp/}$(basename $0).XXXXXXXX")
+FILE_LIST=${TEMPORARY_DIRECTORY}/files_to_scrub
+SORTED_FILE_LIST=${TEMPORARY_DIRECTORY}/sorted_files_to_scrub
+WORK_FILE=${TEMPORARY_DIRECTORY}/in_work
+
+grep -l --recursive -P '\t' * >${FILE_LIST}
+grep -l --recursive -P '\s+$' * >>${FILE_LIST}
+cat ${FILE_LIST} | grep -v 'vendor/' | sort | uniq >${SORTED_FILE_LIST}
+
+for FILE in $(cat ${SORTED_FILE_LIST});
+do
+    MIME_TYPE=$(file --mime "${FILE}" | sed -e 's/^[^:]*: *//' | sed -e 's/;.*//')
+    if echo ${MIME_TYPE} | grep -q -e '^text/.*';
+    then
+        expand --tabs=4 <"${FILE}" | sed -e 's/\s+$//' >${WORK_FILE}
+        mv ${WORK_FILE} "${FILE}"
+        echo Processed ${FILE}
+    fi
+done
