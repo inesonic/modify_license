@@ -175,14 +175,14 @@ Regular expression used to update copyright dates.
 
 """
 
-COPYRIGHT_DATE_HEADER = re.compile(r'\s*[#*]?\s+Copyright\s+[0-9]{4}.*')
+COPYRIGHT_DATE_HEADER = re.compile(r'\s*([#*]?|//)\s+Copyright\s+[0-9]{4}.*')
 """
 Regular expression used to identify copyright dates.  The first of these lines
 are preserved and placed at the top of the copyright region.
 
 """
 
-LINE_START_RE = re.compile(r'(\s*[*#]*[^*#]).*')
+LINE_START_RE = re.compile(r'(\s*([*#]|//)*[^*#]).*')
 """
 Regular expression used to identify how each line should be started.
 
