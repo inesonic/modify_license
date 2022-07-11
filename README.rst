@@ -49,7 +49,6 @@ file.   If enabled, any line matching the regular expression will be a
 candidate for change:
 
 .. code-block::
-
     (.*)Copyright(\s+)(2[0-9]{3})(\s*-\s*(2[0-9]{3}))?([, ].*)?
 
 Example lines might be:
@@ -65,7 +64,6 @@ Example lines might be:
 Lines meeting this string will only be changed if:
 
 * The starting date is not the current year, or
-
 * The ending date is not the current year.
 
 In these scenarios, the string will be modified to either append the current
